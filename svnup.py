@@ -39,7 +39,7 @@ def ssh_connection(host):
 
 def exec_command(connection):
     try:
-        stdin, stdout, stderr = connection.exec_command("cd /opt/www.ftchinese.com/dev_www;svn up;")
+        stdin, stdout, stderr = connection.exec_command("cd /opt/www/dev_www;svn up;")
         result = ''.join(stdout.readlines())
         if result:
             return result
