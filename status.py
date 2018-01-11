@@ -1,12 +1,12 @@
 import paramiko
-import pdb
+#import pdb
 import json
 import time
 from flask import Flask
 app = Flask(__name__)
 
-username='root'
-password='F1n@nc1@lT1me3.'
+username='xxxxx'
+password='xxxx'
 
 def sshcon(IP):
     client = paramiko.SSHClient()
@@ -14,7 +14,7 @@ def sshcon(IP):
     client.connect(hostname=IP,username=username,password=password)
     while True:
         try:
-            stdin,stdout,stderr = client.exec_command('cd /opt/www.ftchinese.com/dev_www;svn info;' )
+            stdin,stdout,stderr = client.exec_command('cd /opt/www.com/dev_www;svn info;' )
             result = ''.join(stdout.readlines())
             return result
             break
@@ -27,7 +27,7 @@ def sshwww1(IP):
     client.connect(hostname=IP,username=username,password=password)
     while True:
         try:
-            stdin,stdout,stderr = client.exec_command('cd /opt/www1.ftchinese.com/dev_www;svn info;' )
+            stdin,stdout,stderr = client.exec_command('cd /opt/www1.com/dev_www;svn info;' )
             result = ''.join(stdout.readlines())
             return result
             break
@@ -40,7 +40,7 @@ def sshstatic(IP):
     client.connect(hostname=IP,username=username,password=password)
     while True:
         try:
-            stdin,stdout,stderr = client.exec_command('cd /opt/static.ftchinese.com/dev_www;svn info;' )
+            stdin,stdout,stderr = client.exec_command('cd /opt/static.com/dev_www;svn info;' )
             result = ''.join(stdout.readlines())
             return result
             break
@@ -58,12 +58,12 @@ def str2json(s):
 
 def runner():
     yield{
-        'HK10.99.10.29 www' : str2json(sshcon('10.99.10.29')),
-        'HK10.99.10.12 www'  : str2json(sshcon('10.99.10.12')),
-        'HK10.99.10.11 www'  : str2json(sshcon('10.99.10.12')),
-        'HK10.99.10.15 www1'  : str2json(sshwww1('10.99.10.15')),
-        'HK 10.99.10.15 static' : str2json(sshstatic('10.99.10.15')),
-        'Tokyo148 10.148.126.11 www' : str2json(sshcon('10.148.126.11')),
+        'HK29 www' : str2json(sshcon('172.10.1.29')),
+        'HK12 www'  : str2json(sshcon('172.10.1.12')),
+        'HK11 www'  : str2json(sshcon('172.10.1.11')),
+        'HK15 www1'  : str2json(sshwww1('172.10.1.15')),
+        'HK15 static' : str2json(sshstatic('172.10.1.15')),
+        'Tokyo148 www' : str2json(sshcon('172.10.1.148')),
         }
 
 def format_(data):
