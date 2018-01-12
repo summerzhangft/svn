@@ -9,44 +9,23 @@ username = 'root'
 password = 'xxxxxxxxxx'
 
 
-#Óëhost½¨Á¢sshÁ¬½Ó
+#ä¸hostå»ºç«‹sshè¿æ¥
 def ssh_connections(IP):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(hostname=IP,username=username,password=password)
     return ssh
-#»ñÈ¡svnµÄĞÅÏ¢
-def exec_command(connection):
+#è·å–svnçš„ä¿¡æ¯
+def exec_command(connection,command):
     try:
-        stdin, stdout, stderr = connection.exec_command("cd /opt/www.com/dev_www;svn info;")
+        stdin, stdout, stderr = connection.exec_command(command)
         result = ''.join(stdout.readlines())
         return result
     finally:
         connection.close()
 
-def ssh_www1(IP):
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=IP,username=username,password=password)
-    try:
-        stdin, stdout, stderr = ssh.exec_command("cd /opt/www1.com/dev_www;svn info;")
-        result = ''.join(stdout.readlines())
-        return result
-    finally:
-        ssh.close()
 
-def ssh_static(IP):
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=IP,username=username,password=password)
-    try:
-        stdin, stdout, stderr = ssh.exec_command("cd /opt/static.com/dev_www;svn info;")
-        result = ''.join(stdout.readlines())
-        return result
-    finally:
-        ssh.close()
-
-#°ÑÊä³öµÄresult×ª»»Îªdict¸ñÊ½
+#æŠŠè¾“å‡ºçš„resultè½¬æ¢ä¸ºdictæ ¼å¼
 def str2json(s):
     clean_line = [line for line in s.split('\n') if line]
     test = dict([line.split(": ") for line in clean_line])
@@ -59,12 +38,12 @@ def str2json(s):
 
 def runner():
     yield{
-        'HK172.27.10.29 www' : str2json(exec_command(ssh_connections('172.27.10.29'))),
-        'HK172.27.10.12 www'  : str2json(exec_command(ssh_connections('172.27.10.12'))),
-        'HK172.27.10.11 www'  : str2json(exec_command(ssh_connections('172.27.10.11'))),
-        'HK172.27.10.15 www1'  : str2json(ssh_www1('172.27.10.15')),
-        'HK 172.27.10.15 static' : str2json(ssh_static('172.27.10.15')),
-        'Tokyo148 10.148.10.11 www' : str2json(exec_command(ssh_connections('10.148.10.11'))),
+        'HK172.27.10.29 www' : str2json(exec_command(ssh_connections('172.27.10.29'),"cd /opt/www.com;svn info")),
+        'HK172.27.10.12 www'  : str2json(exec_command(ssh_connections('172.27.10.12'),"cd /opt/www.com;svn info")),
+        'HK172.27.10.11 www'  : str2json(exec_command(ssh_connections('172.27.10.11'),"cd /opt/www3.com;svn info")),
+        'HK172.27.10.15 www1'  : str2json(exec_command(ssh_connections('172.27.10.11'),"cd /opt/www1.com;svn info")),
+        'HK 172.27.10.15 static' :str2json(exec_command(ssh_connections('172.27.10.11'),"cd /opt/static.com;svn info")), 
+        'Tokyo148 10.148.10.11 www' : str2json(exec_command(ssh_connections('10.148.10.11'),"cd /opt/www5.com;svn info ")),
         }
 def format_(data):
     return json.dumps(data, indent=4, ensure_ascii=False)
