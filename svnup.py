@@ -37,9 +37,9 @@ def ssh_connection(host):
     client.connect(**kwargs)
     return client
 
-def exec_command(connection):
+def exec_command(connection, command):
     try:
-        stdin, stdout, stderr = connection.exec_command("cd /opt/www/dev_www;svn up;")
+        stdin, stdout, stderr = connection.exec_command(command)
         result = ''.join(stdout.readlines())
         if result:
             return result
@@ -57,7 +57,7 @@ def conversion(s):
 
 def main():
     for host in hosts:
-        print(conversion(exec_command(ssh_connection(host))))
+        print(conversion(exec_command(ssh_connection(host),"cd /opt/www.com/dev_www;svn info;")))
     
 if __name__ == '__main__':
     main()
